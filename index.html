@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOBE好き顔9選💖</title>
+  <style>
+    :root {
+      --primary: #ff4757;
+      --bg: #f7f9fc;
+      --card-bg: #ffffff;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      margin: 0; padding: 16px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    h1 { color: #333; font-size: 1.3rem; text-align: center; margin-bottom: 8px; }
+    .container { width: 100%; max-width: 420px; }
+    
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    
+    .card {
+      background: var(--card-bg);
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    
+    .img-container {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .card img, .rank-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+    }
+
+    .member-name {
+      margin: 6px 0 0 0;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .group-name {
+      margin: 2px 0 0 0;
+      font-size: 0.7rem;
+      color: #777;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      min-height: 1.1em;
+    }
+
+    .card.selected {
+      border-color: var(--primary);
+      background: #fff0f2;
+    }
+
+    .badge {
+      position: absolute; top: 12px; right: 12px; background: var(--primary); color: #fff;
+      padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; z-index: 10;
+    }
+
+    .btn-group {
+      display: flex; gap: 10px; margin-top: 16px;
+    }
+    button {
+      flex: 1; padding: 14px; background: var(--primary);
+      color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
+    }
+    button.skip-btn {
+      background: #747d8c;
+    }
+
+    /* -----------------------------------
+       結果画面（9選）専用コンパクトスタイル
+    ----------------------------------- */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3列に綺麗に並べる */
+      gap: 8px;
+      margin-top: 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .rank-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 6px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      border: 1px solid #eee;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .rank-card.rank-1 {
+      border: 2px solid #ffd700;
+      background: #fffdf0;
+    }
+    .rank-card .img-container {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 6px;
+    }
+    .rank-number {
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 0.75rem;
+      margin-bottom: 3px;
+    }
+    .rank-card .member-name {
+      font-size: 0.7rem;
+      margin-top: 4px;
+    }
+    .rank-card .group-name {
+      font-size: 0.6rem;
+      margin-top: 1px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1 id="app-title">TOBE好き顔9選💖</h1>
+  <p id="instruction" style="text-align: center; color: #555; font-size: 0.95rem; line-height: 1.5; margin-bottom: 16px;"></p>
+
+  <div id="game-area"></div>
+
+  <div class="btn-group">
+    <button id="skip-btn" style="display: none;">スキップ</button>
+    <button id="next-btn" style="display: none;">次へ</button>
+  </div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  var RAW_DATA = [
+    [1, '三宅 健', ''],
+    [2, '北山 宏光', ''],
+    [3, '平野 紫耀', 'Number_i'],
+    [4, '神宮寺 勇太', 'Number_i'],
+    [5, '岸 優太', 'Number_i'],
+    [6, '佐藤 新', 'IMP.'],
+    [7, '基 俊介', 'IMP.'],
+    [8, '鈴木 大河', 'IMP.'],
+    [9, '影山 拓也', 'IMP.'],
+    [10, '松井 奏', 'IMP.'],
+    [11, '横原 悠毅', 'IMP.'],
+    [12, '椿 泰我', 'IMP.'],
+    [13, '大東 立樹', 'CLASS SEVEN'],
+    [14, '髙野 秀侑', 'CLASS SEVEN'],
+    [15, '高田 憐', 'CLASS SEVEN'],
+    [16, '近藤 大海', 'CLASS SEVEN'],
+    [17, '横田 大雅', 'CLASS SEVEN'],
+    [18, '星 慧音', 'CLASS SEVEN'],
+    [19, '中澤 蓮', 'CLASS SEVEN'],
+    [20, 'ISSEI', ''],
+    [21, '滝沢 英明', ''],
+    [22, '島田 泰我', 'wink first'],
+    [23, '藤代 翔真', 'wink first'],
+    [24, '松﨑 光', 'wink first'],
+    [25, '川田 瑠輝', 'wink first'],
+    [26, '小助川 優', 'wink first'],
+    [27, '岡本 和蕗', 'TRAINEE'],
+    [28, '清水 翔太', 'TRAINEE'],
+    [29, '赤﨑 渚人', 'TRAINEE'],
+    [30, '新藤 琉空', 'TRAINEE'],
+    [31, '稲垣 樹', 'TRAINEE'],
+    [32, '林 星絆', 'TRAINEE'],
+    [33, '後藤 琉斗', 'TRAINEE'],
+    [34, '庄司 奏多', 'TRAINEE'],
+    [35, '鹿島 央結', 'TRAINEE'],
+    [36, '佐藤 悠月', 'TRAINEE'],
+    [37, '竹川 俊葵', 'TRAINEE'],
+    [38, '須田 湖和', 'TRAINEE'],
+    [39, '濵津 成那', 'TRAINEE'],
+    [40, '荻原 楓生', 'TRAINEE'],
+    [41, '畠山 颯空', 'TRAINEE'],
+    [42, '日野 功壽', 'TRAINEE'],
+    [43, '田中 陽奈大', 'TRAINEE'],
+    [44, '関塚 伝', 'TRAINEE'],
+    [45, '松平 将馬', 'TRAINEE'],
+    [46, '鶴田 悠悟', 'TRAINEE'],
+    [47, '佐藤 陸', 'TRAINEE'],
+    [48, '坪木 翔愛', 'TRAINEE'],
+    [49, '丘山 澟', 'TRAINEE'],
+    [50, '桐山 蒼馬', 'TRAINEE'],
+    [51, '根本 理功', 'TRAINEE'],
+    [52, '山根 叶大', 'TRAINEE'],
+    [53, '金子 侑羽太', 'TRAINEE'],
+    [54, '小早川 達斗', 'TRAINEE'],
+    [55, '井上 息吹', 'TRAINEE'],
+    [56, '大久保 潤', 'TRAINEE'],
+    [57, '佐藤 颯良', 'TRAINEE']
+  ];
+
+  var MEMBERS = [];
+  for (var i = 0; i < RAW_DATA.length; i++) {
+    MEMBERS.push({
+      id: RAW_DATA[i][0],
+      name: RAW_DATA[i][1],
+      group: RAW_DATA[i][2],
+      img: 'images/' + RAW_DATA[i][0] + '.jpg',
+      points: 0,
+      finalWins: 0,
+      selectedInInitial: false
+    });
+  }
+
+  function findMemberById(id) {
+    for (var i = 0; i < MEMBERS.length; i++) {
+      if (MEMBERS[i].id === id) return MEMBERS[i];
+    }
+    return null;
+  }
+
+  var candidatePool = [];
+  var roundQueue = [];
+  var currentGroup = [];
+  var rankSelection = [];
+
+  function shuffle(array) {
+    var arr = array.slice();
+    return arr.sort(function() { return Math.random() - 0.5; });
+  }
+
+  function startInitialPhase() {
+    document.getElementById('instruction').innerHTML = '好きな顔を選んでね♡<br>誰も選ばずにスキップもできるよ！';
+    candidatePool = shuffle(MEMBERS);
+    nextInitialGroup();
+  }
+
+  function nextInitialGroup() {
+    if (candidatePool.length === 0) {
+      var selected = [];
+      for (var i = 0; i < MEMBERS.length; i++) {
+        if (MEMBERS[i].selectedInInitial) selected.push(MEMBERS[i]);
+      }
+      if (selected.length < 12) {
+        alert('選択数が少なすぎるため、全員を対象に進みます。');
+        startSecondPhase(MEMBERS);
+      } else {
+        startSecondPhase(selected);
+      }
+      return;
+    }
+
+    currentGroup = candidatePool.splice(0, 4);
+    var area = document.getElementById('game-area');
+    area.className = 'grid-4';
+    area.innerHTML = '';
+
+    for (var j = 0; j < currentGroup.length; j++) {
+      (function(m) {
+        var card = document.createElement('div');
+        card.className = 'card' + (m.selectedInInitial ? ' selected' : '');
+        var groupHtml = m.group ? '<p class="group-name">' + m.group + '</p>' : '<p class="group-name"></p>';
+        
+        card.innerHTML = 
+          '<div class="img-container">' +
+            '<img src="' + m.img + '" alt="">' +
+          '</div>' +
+          '<p class="member-name">' + m.name + '</p>' +
+          groupHtml;
+
+        var img = card.querySelector('img');
+        img.onerror = function() { this.style.visibility = 'hidden'; };
+
+        card.onclick = function() {
+          m.selectedInInitial = !m.selectedInInitial;
+          card.classList.toggle('selected');
+        };
+        area.appendChild(card);
+      })(currentGroup[j]);
+    }
+
+    var btn = document.getElementById('next-btn');
+    var skipBtn = document.getElementById('skip-btn');
+    btn.style.display = 'block';
+    skipBtn.style.display = 'block';
+
+    btn.onclick = function() { nextInitialGroup(); };
+    skipBtn.onclick = function() {
+      for (var k = 0; k < currentGroup.length; k++) {
+        currentGroup[k].selectedInInitial = false;
+      }
+      nextInitialGroup();
+    };
+  }
+
+  function startSecondPhase(candidates) {
+    document.getElementById('instruction').innerHTML = '4人の中から好きな顔を2人選んで<br>1位2位を決めてね♡';
+    roundQueue = shuffle(candidates);
+    nextSecondGroup();
+  }
+
+  function nextSecondGroup() {
+    if (roundQueue.length < 4) {
+      var sorted = MEMBERS.slice().sort(function(a, b) { return b.points - a.points; });
+      var top12 = sorted.slice(0, 12);
+      startFinalPhase(top12);
+      return;
+    }
+
+    currentGroup = roundQueue.splice(0, 4);
+    rankSelection = [];
+    renderSecondGroup();
+  }
+
+  function renderSecondGroup() {
+    var area = document.getElementById('game-area');
+    area.className = 'grid-4';
+    area.innerHTML = '';
+
+    for (var i = 0; i < currentGroup.length; i++) {
+      (function(m) {
+        var rankIndex = rankSelection.indexOf(m.id);
+        var card = document.createElement('div');
+        card.className = 'card' + (rankIndex !== -1 ? ' selected' : '');
+        var badge = rankIndex === 0 ? '<span class="badge">1位</span>' : (rankIndex === 1 ? '<span class="badge">2位</span>' : '');
+        var groupHtml = m.group ? '<p class="group-name">' + m.group + '</p>' : '<p class="group-name"></p>';
+        
+        card.innerHTML = 
+          badge +
+          '<div class="img-container">' +
+            '<img src="' + m.img + '" alt="">' +
+          '</div>' +
+          '<p class="member-name">' + m.name + '</p>' +
+          groupHtml;
+
+        var img = card.querySelector('img');
+        img.onerror = function() { this.style.visibility = 'hidden'; };
+
+        card.onclick = function() {
+          if (rankIndex !== -1) {
+            rankSelection.splice(rankIndex, 1);
+          } else if (rankSelection.length < 2) {
+            rankSelection.push(m.id);
+          }
+          renderSecondGroup();
+        };
+        area.appendChild(card);
+      })(currentGroup[i]);
+    }
+
+    var btn = document.getElementById('next-btn');
+    var skipBtn = document.getElementById('skip-btn');
+    btn.style.display = 'block';
+    skipBtn.style.display = 'none';
+
+    btn.onclick = function() {
+      if (rankSelection[0]) {
+        var p1 = findMemberById(rankSelection[0]);
+        if (p1) p1.points += 5;
+      }
+      if (rankSelection[1]) {
+        var p2 = findMemberById(rankSelection[1]);
+        if (p2) p2.points += 3;
+      }
+      nextSecondGroup();
+    };
+  }
+
+  var finalPairs = [];
+  function startFinalPhase(top12) {
+    document.getElementById('instruction').innerHTML = '2人の中から好きな顔を1人選んでね♡';
+
+    finalPairs = [];
+    for (var i = 0; i < top12.length; i++) {
+      for (var j = i + 1; j < top12.length; j++) {
+        finalPairs.push([top12[i], top12[j]]);
+      }
+    }
+    finalPairs = shuffle(finalPairs);
+    nextFinalMatch();
+  }
+
+  function nextFinalMatch() {
+    if (finalPairs.length === 0) {
+      showResults();
+      return;
+    }
+
+    var pair = finalPairs.pop();
+    var area = document.getElementById('game-area');
+    area.className = 'grid-2';
+    area.innerHTML = '';
+
+    for (var i = 0; i < pair.length; i++) {
+      (function(m) {
+        var card = document.createElement('div');
+        card.className = 'card';
+        var groupHtml = m.group ? '<p class="group-name">' + m.group + '</p>' : '<p class="group-name"></p>';
+        card.innerHTML = 
+          '<div class="img-container">' +
+            '<img src="' + m.img + '" alt="">' +
+          '</div>' +
+          '<p class="member-name">' + m.name + '</p>' +
+          groupHtml;
+
+        var img = card.querySelector('img');
+        img.onerror = function() { this.style.visibility = 'hidden'; };
+
+        card.onclick = function() {
+          m.finalWins += 1;
+          nextFinalMatch();
+        };
+        area.appendChild(card);
+      })(pair[i]);
+    }
+
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('skip-btn').style.display = 'none';
+  }
+
+  function showResults() {
+    document.getElementById('app-title').innerText = 'あなたのTOBE好き顔9選👑';
+    document.getElementById('instruction').innerText = '';
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('skip-btn').style.display = 'none';
+
+    var sorted = MEMBERS.slice().sort(function(a, b) {
+      return (b.finalWins - a.finalWins) || (b.points - a.points);
+    });
+    var god9 = sorted.slice(0, 9);
+
+    var area = document.getElementById('game-area');
+    area.className = 'results-grid';
+    area.innerHTML = '';
+
+    for (var idx = 0; idx < god9.length; idx++) {
+      var m = god9[idx];
+      var card = document.createElement('div');
+      card.className = 'rank-card' + (idx === 0 ? ' rank-1' : '');
+      var groupHtml = m.group ? '<p class="group-name">' + m.group + '</p>' : '<p class="group-name"></p>';
+      card.innerHTML = 
+        '<div class="rank-number">' + (idx === 0 ? '👑 1位' : (idx + 1) + '位') + '</div>' +
+        '<div class="img-container">' +
+          '<img src="' + m.img + '" alt="">' +
+        '</div>' +
+        '<p class="member-name">' + m.name + '</p>' +
+        groupHtml;
+
+      var img = card.querySelector('img');
+      img.onerror = function() { this.style.visibility = 'hidden'; };
+
+      area.appendChild(card);
+    }
+  }
+
+  startInitialPhase();
+});
+</script>
+</body>
+</html>
