@@ -3,28 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TOBE好き顔9選💖</title>
+  <title>TOBE 好きな顔TOP9✨</title>
   <style>
     :root {
-      --primary: #ff4757;
-      --bg: #f7f9fc;
-      --card-bg: #ffffff;
+      --bg: #121212;            /* 深い黒系背景 */
+      --card-bg: #1e1e1e;       /* ダークグレーのカード */
+      --card-border: #2c2c2c;   /* 控えめな枠線 */
+      --text-main: #ffffff;     /* メイン文字色（白） */
+      --text-sub: #a0a0a0;      /* サブ文字色（ライトグレー） */
+      --btn-bg: #333333;        /* ボタン背景 */
+      --btn-hover: #444444;     /* ボタンホバー時 */
+      --btn-text: #ffffff;      /* ボタン文字色 */
+      --accent: #ffffff;        /* 選択時アクセント */
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
+      color: var(--text-main);
       margin: 0; padding: 16px;
       display: flex; flex-direction: column; align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
     }
-    h1 { color: #333; font-size: 1.3rem; text-align: center; margin-bottom: 8px; }
+    h1 { color: var(--text-main); font-size: 1.4rem; text-align: center; margin-bottom: 8px; }
     .container { width: 100%; max-width: 420px; }
     
+    /* -----------------------------------
+       スタート画面（トップページ）専用スタイル
+    ----------------------------------- */
+    #start-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px 40px;
+      text-align: center;
+    }
+    #start-screen h1 {
+      font-size: 1.6rem;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+    }
+    .start-description {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text-sub);
+      margin-bottom: 40px;
+    }
+    .start-btn {
+      width: 100%;
+      max-width: 280px;
+      padding: 16px;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: 1px solid #444;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s;
+    }
+    .start-btn:active {
+      transform: scale(0.98);
+      background: var(--btn-hover);
+    }
+
+    /* -----------------------------------
+       メインゲーム画面スタイル
+    ----------------------------------- */
     .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
     .card {
       background: var(--card-bg);
-      border: 2px solid #eee;
+      border: 2px solid var(--card-border);
       border-radius: 12px;
       padding: 8px;
       text-align: center;
@@ -41,7 +94,7 @@
     .img-container {
       width: 100%;
       aspect-ratio: 1 / 1;
-      background-color: #e0e0e0;
+      background-color: #2a2a2a;
       border-radius: 8px;
       overflow: hidden;
       position: relative;
@@ -59,7 +112,7 @@
       margin: 6px 0 0 0;
       font-size: 0.85rem;
       font-weight: bold;
-      color: #333;
+      color: var(--text-main);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -69,7 +122,7 @@
     .group-name {
       margin: 2px 0 0 0;
       font-size: 0.7rem;
-      color: #777;
+      color: var(--text-sub);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -78,52 +131,53 @@
     }
 
     .card.selected {
-      border-color: var(--primary);
-      background: #fff0f2;
+      border-color: #ffffff;
+      background: #282828;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
     }
 
     .badge {
-      position: absolute; top: 12px; right: 12px; background: var(--primary); color: #fff;
+      position: absolute; top: 12px; right: 12px; background: #ffffff; color: #000000;
       padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; z-index: 10;
     }
 
     .btn-group {
       display: flex; gap: 10px; margin-top: 16px;
     }
-    button {
-      flex: 1; padding: 14px; background: var(--primary);
-      color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
+    .action-btn {
+      flex: 1; padding: 14px; background: var(--btn-bg);
+      color: var(--btn-text); border: 1px solid #444; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
     }
-    button.skip-btn {
-      background: #747d8c;
+    .action-btn.skip-btn {
+      background: #222222;
+      color: #888888;
+      border-color: #333333;
     }
 
-    /* -----------------------------------
-       結果画面（9選）専用コンパクトスタイル
-    ----------------------------------- */
+    /* 結果画面（9選）スタイル */
     .results-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3列に綺麗に並べる */
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin-top: 12px;
       width: 100%;
       box-sizing: border-box;
     }
     .rank-card {
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 8px;
       padding: 6px;
       text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-      border: 1px solid #eee;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      border: 1px solid var(--card-border);
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
     .rank-card.rank-1 {
-      border: 2px solid #ffd700;
-      background: #fffdf0;
+      border: 2px solid #ffffff;
+      background: #252525;
     }
     .rank-card .img-container {
       width: 100%;
@@ -132,7 +186,7 @@
     }
     .rank-number {
       font-weight: bold;
-      color: var(--primary);
+      color: #ffffff;
       font-size: 0.75rem;
       margin-bottom: 3px;
     }
@@ -149,14 +203,28 @@
 <body>
 
 <div class="container">
-  <h1 id="app-title">TOBE好き顔9選💖</h1>
-  <p id="instruction" style="text-align: center; color: #555; font-size: 0.95rem; line-height: 1.5; margin-bottom: 16px;"></p>
+  <!-- トップ画面 -->
+  <div id="start-screen">
+    <h1>✨ 好きな顔TOP9 ✨</h1>
+    <p class="start-description">
+      まずは57人の中から<br>
+      「好き！」と思う顔を選んでね<br>
+      何人選んでもOK！
+    </p>
+    <button id="start-game-btn" class="start-btn">スタート！</button>
+  </div>
 
-  <div id="game-area"></div>
+  <!-- ゲームプレイ画面（初期状態は隠す） -->
+  <div id="game-screen" style="display: none;">
+    <h1 id="app-title">TOBE 好きな顔TOP9✨</h1>
+    <p id="instruction" style="text-align: center; color: var(--text-sub); font-size: 0.95rem; line-height: 1.5; margin-bottom: 16px;"></p>
 
-  <div class="btn-group">
-    <button id="skip-btn" style="display: none;">スキップ</button>
-    <button id="next-btn" style="display: none;">次へ</button>
+    <div id="game-area"></div>
+
+    <div class="btn-group">
+      <button id="skip-btn" class="action-btn skip-btn" style="display: none;">スキップ</button>
+      <button id="next-btn" class="action-btn" style="display: none;">次へ</button>
+    </div>
   </div>
 </div>
 
@@ -252,8 +320,15 @@ window.addEventListener('DOMContentLoaded', function() {
     return arr.sort(function() { return Math.random() - 0.5; });
   }
 
+  // スタートボタンを押した時の処理
+  document.getElementById('start-game-btn').onclick = function() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'block';
+    startInitialPhase();
+  };
+
   function startInitialPhase() {
-    document.getElementById('instruction').innerHTML = '好きな顔を選んでね♡<br>誰も選ばずにスキップもできるよ！';
+    document.getElementById('instruction').innerHTML = '好きな顔を選んでね<br>誰も選ばずにスキップもできるよ！';
     candidatePool = shuffle(MEMBERS);
     nextInitialGroup();
   }
@@ -317,7 +392,7 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 
   function startSecondPhase(candidates) {
-    document.getElementById('instruction').innerHTML = '4人の中から好きな顔を2人選んで<br>1位2位を決めてね♡';
+    document.getElementById('instruction').innerHTML = '4人の中から好きな顔を2人選んで<br>1位2位を決めてね';
     roundQueue = shuffle(candidates);
     nextSecondGroup();
   }
@@ -391,7 +466,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
   var finalPairs = [];
   function startFinalPhase(top12) {
-    document.getElementById('instruction').innerHTML = '2人の中から好きな顔を1人選んでね♡';
+    document.getElementById('instruction').innerHTML = '2人の中から好きな顔を1人選んでね';
 
     finalPairs = [];
     for (var i = 0; i < top12.length; i++) {
@@ -442,7 +517,7 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 
   function showResults() {
-    document.getElementById('app-title').innerText = 'あなたのTOBE好き顔9選👑';
+    document.getElementById('app-title').innerText = 'あなたのTOBE好きな顔TOP9👑';
     document.getElementById('instruction').innerText = '';
     document.getElementById('next-btn').style.display = 'none';
     document.getElementById('skip-btn').style.display = 'none';
@@ -460,7 +535,7 @@ window.addEventListener('DOMContentLoaded', function() {
       var m = god9[idx];
       var card = document.createElement('div');
       card.className = 'rank-card' + (idx === 0 ? ' rank-1' : '');
-      var groupHtml = m.group ? '<p class="group-name">' + m.group + '</p>' : '<p class="group-name"></p>';
+      var groupHtml = m.group ? '<p class="group-name" style="font-size:0.65rem;">' + m.group + '</p>' : '<p class="group-name"></p>';
       card.innerHTML = 
         '<div class="rank-number">' + (idx === 0 ? '👑 1位' : (idx + 1) + '位') + '</div>' +
         '<div class="img-container">' +
@@ -475,8 +550,6 @@ window.addEventListener('DOMContentLoaded', function() {
       area.appendChild(card);
     }
   }
-
-  startInitialPhase();
 });
 </script>
 </body>
