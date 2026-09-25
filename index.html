@@ -311,7 +311,8 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 
   var candidatePool = [];
-  var roundQueue = [];
+  var secondPhaseGroups = [];
+  var currentGroupIndex = 0;
   var currentGroup = [];
   var rankSelection = [];
 
@@ -391,21 +392,38 @@ window.addEventListener('DOMContentLoaded', function() {
     };
   }
 
+  // 複数回ランダムでグループを作成するロジック
   function startSecondPhase(candidates) {
     document.getElementById('instruction').innerHTML = '4人の中から好きな顔を2人選んで<br>1位2位を決めてね';
-    roundQueue = shuffle(candidates);
+    
+    secondPhaseGroups = [];
+    currentGroupIndex = 0;
+
+    // 全員が平均3回以上対戦できるようにラウンド数を計算（最低12グループ）
+    var totalRounds = Math.max(12, Math.ceil((candidates.length * 3) / 4));
+
+    for (var r = 0; r < totalRounds; r++) {
+      var shuffled = shuffle(candidates);
+      for (var g = 0; g + 3 < shuffled.length; g += 4) {
+        secondPhaseGroups.push(shuffled.slice(g, g + 4));
+      }
+    }
+
+    // さらにグループの順序をシャッフル
+    secondPhaseGroups = shuffle(secondPhaseGroups);
     nextSecondGroup();
   }
 
   function nextSecondGroup() {
-    if (roundQueue.length < 4) {
+    if (currentGroupIndex >= secondPhaseGroups.length) {
+      // 累積ポイントでソートして上位12名を選出
       var sorted = MEMBERS.slice().sort(function(a, b) { return b.points - a.points; });
       var top12 = sorted.slice(0, 12);
       startFinalPhase(top12);
       return;
     }
 
-    currentGroup = roundQueue.splice(0, 4);
+    currentGroup = secondPhaseGroups[currentGroupIndex];
     rankSelection = [];
     renderSecondGroup();
   }
@@ -460,6 +478,7 @@ window.addEventListener('DOMContentLoaded', function() {
         var p2 = findMemberById(rankSelection[1]);
         if (p2) p2.points += 3;
       }
+      currentGroupIndex++;
       nextSecondGroup();
     };
   }
